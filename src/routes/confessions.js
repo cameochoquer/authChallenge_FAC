@@ -2,9 +2,19 @@ const {
   listConfessions,
   createConfession,
 } = require("../model/confessions.js");
+const { getSession } = require("../model/session.js");
 const { Layout } = require("../templates.js");
 
 function get(req, res) {
+    const sid = req.signedCookies.sid;
+    const session = getSession(sid);
+    const currentUser = session && session.user_id
+    const urlUser =  Number(req.params.user_id);
+    if(currentUser !== urlUser ){
+      res.status(401).send("<h1>You aren't allowed to see that</h1>")
+    }
+
+
   /**
    * Currently any user can view any other user's private confessions!
    * We need to ensure only the logged in user can see their page.
