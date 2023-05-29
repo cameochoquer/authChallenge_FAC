@@ -25,16 +25,6 @@ function get(req, res) {
   const body = Layout({ title, content });
   res.send(body);
 }
-    /**
-     * [1] Hash the password
-  
-     * [2] Create the user in the DB
-
-     * [3] Create the session with the new user's ID
-
-     * [4] Set a cookie with the session ID
-     * [5] Redirect to the user's confession page (e.g. /confessions/3)
-     */
 const post = (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {

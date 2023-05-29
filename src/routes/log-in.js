@@ -1,5 +1,8 @@
+const { createSession } = require("../model/session.js");
 const { getUserByEmail } = require("../model/user.js");
 const { Layout } = require("../templates.js");
+const bcrypt = require("bcryptjs");
+
 
 function get(req, res) {
   const title = "Log in to your account";
@@ -23,20 +26,30 @@ function get(req, res) {
   res.send(body);
 }
 
-function post(req, res) {
-  const { email, password } = req.body;
-  const user = getUserByEmail(email);
-  if (!email || !password || !user) {
-    return res.status(400).send("<h1>Login failed</h1>");
-  }
-  res.send("to-do");
-  /**
+ /**
    * [1] Compare submitted password to stored hash
    * [2] If no match redirect back to same page so user can retry
    * [3] If match create a session with their user ID,
    *     set a cookie with the session ID,
    *     redirect to the user's confession page (e.g. /confessions/3)
    */
+
+const post = (req, res) => {
+  const { email, password } = req.body;
+  const user = getUserByEmail(email);
+  if (!email || !password || !user) {
+    return res.status(400).send("<h1>Login failed</h1>");
+  } 
+    bcrypt.compare(password, user.hash)
+    .then((result) => {
+      if(!result) { 
+        return res.status(400).send("<h1>Login failed</h1>");
+      } else {
+      const sessionId = createSession(user.id);
+      res.set(`set-cookie`, `${sessionId}; HttpOnly; Max-Age=60; SameSite=Lax`);
+      res.redirect(`/confessions/${user.id}`);
+    }
+    });
 }
 
 module.exports = { get, post };
