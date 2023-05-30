@@ -11,12 +11,9 @@ const insert_session = db.prepare(/*sql*/`
 )`);
 
 const createSession = (user_id) => {
-const id = crypto.randomBytes(18).toString('base64')
-.replace(/\+/g, '-')
-.replace(/\//g, '_')
-.replace(/=+$/, '');
-insert_session.run({id, user_id})
-return id
+const id = crypto.randomBytes(18).toString("base64");
+insert_session.run({ id, user_id });
+return id;
 }
 
 const select_session = db.prepare(`

@@ -8,7 +8,8 @@ const { Layout } = require("../templates.js");
 const get = (req, res) => {
     const sid = req.signedCookies.sid;
     const session = getSession(sid);
-    const currentUser = session && session.user_id
+    console.log(session)
+    const currentUser = session && session.user_id;
     const urlUser =  Number(req.params.user_id);
     if(currentUser !== urlUser ){
       res.status(401).send("<h1>You aren't allowed to see that</h1>")
@@ -44,10 +45,11 @@ const post = (req, res) => {
   const sid = req.signedCookies.sid;
   const session = getSession(sid);
   const currentUser = session && session.user_id
-  if(!currentUser || !req.body.content){
+  const content = req.body.content
+  if(!currentUser || !content){
     return res.status(401).send("<h1>Confession failed</h1>");
   }
-  createConfession(req.body.content, currentUser)
+  createConfession(content, currentUser)
   res.redirect(`/confessions/${currentUser}`);
 }
 

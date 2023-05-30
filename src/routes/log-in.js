@@ -38,7 +38,12 @@ const post = (req, res) => {
         return res.status(400).send("<h1>Login failed</h1>");
       } else {
       const sessionId = createSession(user.id);
-      res.set(`set-cookie`, `${sessionId}; HttpOnly; Max-Age=60; SameSite=Lax`);
+      res.cookie("sid", sessionId, {
+        signed: true,
+        maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
+        sameSite: "lax",
+        httpOnly: true,
+      });
       res.redirect(`/confessions/${user.id}`);
     }
     });
